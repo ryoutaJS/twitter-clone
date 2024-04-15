@@ -1,5 +1,6 @@
 import { Grid } from "@mui/material";
 import { Header } from "../componets/elements/header/header";
+import { Footer } from "../componets/elements/footer/footer";
 
 const Home = async () => {
   return (
@@ -15,6 +16,12 @@ const Home = async () => {
           <div>
             <h1>Hello World!!!</h1>
           </div>
+        </Grid>
+      </Grid>
+      <Grid container style={{ marginTop: "50px" }}>
+        <Grid item xs={12}>
+          {/* Footerコンポーネントの利用 */}
+          <Footer />
         </Grid>
       </Grid>
     </>
