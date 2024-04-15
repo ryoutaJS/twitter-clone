@@ -1,6 +1,7 @@
 "use client";
 
 import HomeIcon from "@mui/icons-material/Home";
+import SearchIcon from "@mui/icons-material/Search";
 import { Grid } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -21,6 +22,11 @@ export const Footer = () => {
                 style={{ color: "white" }}
               >
                 <HomeIcon />
+              </IconButton>
+            </Grid>
+            <Grid item xs={3} style={{ paddingLeft: "6%" }}>
+              <IconButton color='inherit'>
+                <SearchIcon />
               </IconButton>
             </Grid>
           </Grid>
