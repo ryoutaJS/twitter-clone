@@ -1,8 +1,13 @@
 import { Grid } from "@mui/material";
 import { Header } from "../componets/elements/header/header";
 import { Footer } from "../componets/elements/footer/footer";
+import { useFetchTweetsData } from "./home.hooks";
 
 const Home = async () => {
+  const { fetchTweetsData } = useFetchTweetsData(["test@mail.com"]);
+  const tweetsData = await fetchTweetsData();
+  console.log(tweetsData);
+
   return (
     <>
       <Grid container>
