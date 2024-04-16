@@ -82,8 +82,13 @@ export const TweetCard = (props: Props) => {
           <ChatBubbleOutline />
         </IconButton>
         <IconButton aria-label='add to favorites'>
-          <Favorite />
+          <Favorite
+            style={{
+              color: props.tweet.tweetUserAction.good !== "0" ? "red" : "gray",
+            }}
+          />
         </IconButton>
+        <Box>{props.tweet.tweetUserAction.good}</Box>
       </CardActions>
     </Card>
   );
