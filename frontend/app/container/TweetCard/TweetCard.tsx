@@ -2,9 +2,12 @@
 
 import { StyledMenu } from "@/app/componets/styledMenu/styledMenu";
 import { tweetData } from "@/app/type/types";
+import { ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -74,6 +77,11 @@ export const TweetCard = (props: Props) => {
         alt='image'
         style={{ objectFit: "contain" }}
       />
+      <CardActions sx={{ mr: 3, ml: 3 }}>
+        <IconButton aria-label='add to favorites'>
+          <ChatBubbleOutline />
+        </IconButton>
+      </CardActions>
     </Card>
   );
 };
