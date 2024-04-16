@@ -5,9 +5,11 @@ import { tweetData } from "@/app/type/types";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
-import { MenuItem } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
 type Props = {
@@ -58,6 +60,11 @@ export const TweetCard = (props: Props) => {
         title={props.tweet.tweetInfo.userName}
         subheader={props.tweet.tweetInfo.createdAt}
       />
+      <CardContent sx={{ mr: 3, ml: 3 }}>
+        <Typography variant='body2' color='text.secondary'>
+          {props.tweet.tweetContent.message}
+        </Typography>
+      </CardContent>
     </Card>
   );
 };
