@@ -3,7 +3,7 @@ import { apiClient } from "../utils/baseApi";
 
 export const useFetchTweetsData = (userIds: string[]) => {
   const fetchTweetsData = async (): Promise<tweetData[]> => {
-    const tweetsData = await apiClient(
+    const tweetsData: tweetsData = await apiClient(
       "/api/fetch_tweet",
       "POST",
       "no-store",
