@@ -20,6 +20,6 @@ export type tweetContent = {
 }
 
 export type userAction = {
-  good: string; // いいね
+  good: number; // いいね
   comments: string[]; // ツイートに対するコメント
 };
