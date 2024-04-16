@@ -81,6 +81,9 @@ export const TweetCard = (props: Props) => {
         <IconButton aria-label='add to favorites'>
           <ChatBubbleOutline />
         </IconButton>
+        <IconButton aria-label='add to favorites'>
+          <Favorite />
+        </IconButton>
       </CardActions>
     </Card>
   );
