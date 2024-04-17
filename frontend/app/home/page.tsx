@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import { Header } from "../components/elements/header/header";
 import { Footer } from "../components/elements/footer/footer";
-import { TweetCard } from "../container/TweetCard/TweetCard";
+import { TweetCard } from "../components/container/TweetCard/TweetCard";
 import { useFetchTweetsData } from "./home.hooks";
 
 const Home = async () => {
