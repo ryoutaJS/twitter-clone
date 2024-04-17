@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
-import { Header } from "../componets/elements/header/header";
-import { Footer } from "../componets/elements/footer/footer";
+import { Header } from "../components/elements/header/header";
+import { Footer } from "../components/elements/footer/footer";
 import { TweetCard } from "../container/TweetCard/TweetCard";
 import { useFetchTweetsData } from "./home.hooks";
 

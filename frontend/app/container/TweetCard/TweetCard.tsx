@@ -1,6 +1,6 @@
 "use client";
 
-import { StyledMenu } from "@/app/componets/styledMenu/styledMenu";
+import { StyledMenu } from "@/app/components/styledMenu/styledMenu";
 import { tweetData } from "@/app/type/types";
 import { ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
