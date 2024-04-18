@@ -1,4 +1,4 @@
-import { Avatar, Button, Grid } from "@mui/material";
+import { Avatar, Button, Grid, TextareaAutosize } from "@mui/material";
 import Link from "next/link";
 
 const _CreateTweet = () => {
@@ -25,6 +25,17 @@ const _CreateTweet = () => {
         src={
           "https://kotonohaworks.com/free-icons/wp-content/uploads/kkrn_icon_user_1-768x768.png"
         }
+      />
+      <TextareaAutosize
+        maxRows={4}
+        placeholder='いまどうしてる？'
+        style={{
+          width: "100%",
+          height: "20vh",
+          outline: "none",
+          border: "none",
+          fontSize: "15pt",
+        }}
       />
     </>
   );
