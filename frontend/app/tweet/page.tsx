@@ -10,6 +10,15 @@ const _CreateTweet = () => {
             <Button variant='text'>キャンセル</Button>
           </Link>
         </Grid>
+        <Grid item xs={9} sx={{ display: "flex", justifyContent: "end" }}>
+          <Button
+            variant='contained'
+            type='submit'
+            style={{ borderRadius: "20px" }}
+          >
+            投稿する
+          </Button>
+        </Grid>
       </Grid>
     </>
   );
