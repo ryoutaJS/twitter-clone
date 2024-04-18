@@ -15,8 +15,9 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "next": "14.0.4",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "react-hook-form": "^7.51.3",
     "recoil": "^0.7.7",
     "the-new-css-reset": "^1.11.2"
   },
