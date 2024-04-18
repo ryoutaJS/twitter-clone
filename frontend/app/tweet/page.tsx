@@ -4,9 +4,20 @@ import { Avatar, Button, Grid, TextareaAutosize } from "@mui/material";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { tweetData } from "../type/types";
+import { useEffect, useState } from "react";
 
 const _CreateTweet = () => {
-  const { register, handleSubmit } = useForm<tweetData>();
+  const { register, handleSubmit, watch } = useForm<tweetData>();
+  const [disable, setDisable] = useState(true);
+
+  useEffect(() => {
+    let len = watch("tweetContent.message").length;
+    if (len === 0) {
+      setDisable(true);
+    } else {
+      setDisable(false);
+    }
+  }, [watch("tweetContent.message")]);
 
   return (
     <>
@@ -22,6 +33,7 @@ const _CreateTweet = () => {
               variant='contained'
               type='submit'
               style={{ borderRadius: "20px" }}
+              disabled={disable}
             >
               投稿する
             </Button>
