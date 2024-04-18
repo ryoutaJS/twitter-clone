@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mui/material";
+import { Avatar, Button, Grid } from "@mui/material";
 import Link from "next/link";
 
 const _CreateTweet = () => {
@@ -20,6 +20,12 @@ const _CreateTweet = () => {
           </Button>
         </Grid>
       </Grid>
+      <Avatar
+        alt='Remy Sharp'
+        src={
+          "https://kotonohaworks.com/free-icons/wp-content/uploads/kkrn_icon_user_1-768x768.png"
+        }
+      />
     </>
   );
 };
