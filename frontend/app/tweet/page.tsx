@@ -5,6 +5,7 @@ import {
   Button,
   Fab,
   Grid,
+  Input,
   styled,
   TextareaAutosize,
 } from "@mui/material";
@@ -13,9 +14,11 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { tweetData } from "../type/types";
 import { useEffect, useState } from "react";
+import { useCreateTweet } from "./tweet.hooks";
 
 const _CreateTweet = () => {
   const { register, handleSubmit, watch } = useForm<tweetData>();
+  const { onChangeFileInput, binaryForImgData, image } = useCreateTweet();
   const [disable, setDisable] = useState(true);
 
   useEffect(() => {
@@ -74,8 +77,26 @@ const _CreateTweet = () => {
           }}
           {...register("tweetContent.message", { required: true })}
         />
+        {!!binaryForImgData && (
+          <img
+            // binaryForImgDataがある場合はプレビュー表示する
+            src={`${binaryForImgData}`}
+            alt='B64image'
+            style={{ width: "100%", height: "40vh", objectFit: "contain" }}
+          />
+        )}
         <StyledFab color='primary' aria-label='add'>
-          <AddPhotoAlternate />
+          <label htmlFor='uploadButton'>
+            <Input
+              id='uploadButton'
+              type='file'
+              {...register("tweetContent.imgName")}
+              sx={{ display: "none" }}
+              // ファイルがアップロードされたときのchangeイベントを監視
+              onChange={onChangeFileInput}
+            />
+            <AddPhotoAlternate />
+          </label>
         </StyledFab>
       </form>
     </>
