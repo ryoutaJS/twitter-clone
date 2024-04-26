@@ -1,6 +1,14 @@
 "use client";
 
-import { Avatar, Button, Grid, TextareaAutosize } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Fab,
+  Grid,
+  styled,
+  TextareaAutosize,
+} from "@mui/material";
+import { AddPhotoAlternate } from "@mui/icons-material";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { tweetData } from "../type/types";
@@ -18,6 +26,15 @@ const _CreateTweet = () => {
       setDisable(false);
     }
   }, [watch("tweetContent.message")]);
+
+  //  StyledFabを追加
+  const StyledFab = styled(Fab)({
+    position: "absolute",
+    zIndex: 1,
+    top: "90%",
+    left: "80%",
+    right: 0,
+  });
 
   return (
     <>
@@ -57,6 +74,9 @@ const _CreateTweet = () => {
           }}
           {...register("tweetContent.message", { required: true })}
         />
+        <StyledFab color='primary' aria-label='add'>
+          <AddPhotoAlternate />
+        </StyledFab>
       </form>
     </>
   );
