@@ -18,7 +18,8 @@ import { useCreateTweet } from "./tweet.hooks";
 
 const _CreateTweet = () => {
   const { register, handleSubmit, watch } = useForm<tweetData>();
-  const { onChangeFileInput, binaryForImgData, image } = useCreateTweet();
+  const { onChangeFileInput, binaryForImgData, image, handleSubmitAction } =
+    useCreateTweet();
   const [disable, setDisable] = useState(true);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const _CreateTweet = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit((e) => console.log(e))}>
+      <form onSubmit={handleSubmit(handleSubmitAction)}>
         <Grid container mt={1}>
           <Grid item xs={3}>
             <Link href='/home' style={{ textDecoration: "none" }}>
