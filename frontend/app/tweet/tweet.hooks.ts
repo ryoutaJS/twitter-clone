@@ -1,12 +1,14 @@
 import { apiClient } from "../utils/baseApi";
 import { SubmitHandler } from "react-hook-form";
 import { tweetData } from "../type/types";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 /* tweetを生成するためのhooks */
 export const useCreateTweet = () => {
   const id = uuidv4();
+  const router = useRouter();
   const [binaryForImgData, setBinay] = useState<
     string | ArrayBuffer | null | undefined
   >(null);
@@ -38,6 +40,22 @@ export const useCreateTweet = () => {
     const uploadUrl = await getUploadUrl(id);
     if (image !== undefined && uploadUrl !== null) {
       putTweetImageToStorage(uploadUrl, image as Blob);
+    }
+    const tweetReqData = await createTweetRequestData(id, tweet);
+    try {
+      await apiClient(
+        "/api/create_tweet",
+        "POST",
+        "no-store",
+        JSON.stringify(tweetReqData)
+      );
+      // ツイート登録後は/homeに遷移させる
+      router.push("/home");
+      // router.pushはコンポーネントの状態を保持したまま画面遷移を行うため、データfetchが行われない。
+      // そのため、refreshを用いてサーバーからデータをfetchし直すようにしている
+      router.refresh();
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -73,3 +91,27 @@ const putTweetImageToStorage = async (uploadUrl: string, image: Blob): Promise<v
     });
   }
 }
+
+/** ツイート作成APIのリクエストデータを生成する関数 */
+const createTweetRequestData = async (
+  id: string,
+  tweet: tweetData
+): Promise<tweetData | null> => {
+  const requestData = {
+    id,
+    tweetInfo: {
+      userName: "testUserName",
+      createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
+    },
+    tweetContent: {
+      message: tweet.tweetContent.message,
+      imgName: tweet.tweetContent.imgName,
+    },
+    tweetUserAction: {
+      good: 0,
+      comments: [],
+    },
+    userId: "test@mail.com",
+  };
+  return requestData;
+};
