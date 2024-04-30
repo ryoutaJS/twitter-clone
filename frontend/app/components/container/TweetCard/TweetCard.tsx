@@ -15,6 +15,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+import { useFetchTweetImage } from "./tweetCard.hooks";
+import { Skeleton } from "@mui/material";
 
 type Props = {
   // 親コンポーネントから受け取ったツイートデータ
@@ -30,6 +32,8 @@ export const TweetCard = (props: Props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const { imageUrl } = useFetchTweetImage(props.tweet);
 
   return (
     <Card>
@@ -69,14 +73,17 @@ export const TweetCard = (props: Props) => {
           {props.tweet.tweetContent.message}
         </Typography>
       </CardContent>
-      <CardMedia
-        component='img'
-        height='200'
-        // TODO: ダウンロードURL取得APIから取得したURLを設定するように
-        image='https://news.walkerplus.com/article/1023800/10210444_615.jpg'
-        alt='image'
-        style={{ objectFit: "contain" }}
-      />
+      {imageUrl ? (
+        <CardMedia
+          component='img'
+          height='200'
+          image={imageUrl}
+          alt='image'
+          style={{ objectFit: "contain" }}
+        />
+      ) : (
+        <Skeleton variant='rectangular' height={200} />
+      )}
       <CardActions sx={{ mr: 3, ml: 3 }}>
         <IconButton aria-label='add to favorites'>
           <ChatBubbleOutline />
