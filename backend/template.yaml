@@ -71,6 +71,16 @@ Resources:
       DockerContext: ./
       DockerTag: python3.9-v1
 
+  # cloud watchの設定
+  TweetActionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${TweetActionFunction}
+      RetentionInDays: !Ref LogRetentionInDays
+      Tags:
+        - Key: TwitterLikeSnsDeveloper
+          Value: Green
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
