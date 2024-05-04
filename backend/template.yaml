@@ -22,22 +22,27 @@ Parameters:
     Default: 1
 
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  MyApi:
+    # HTTPS エンドポイント経由で呼び出すことができる Amazon API Gateway リソースを作成
+    Type: AWS::Serverless::Api
     Properties:
-      PackageType: Image
-      Architectures:
-        - x86_64
-      Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /hello
-            Method: get
-    Metadata:
-      Dockerfile: Dockerfile
-      DockerContext: ./hello_world
-      DockerTag: python3.9-v1
+      # StageName: URIの最初のパスセグメントとして使用するステージの名前
+      StageName: !Ref StageName # Parametersの参照
+      MethodSettings:
+        - DataTraceEnabled: false
+          ResourcePath: "/*"
+          HttpMethod: "*"
+      # すべての API Gateway API のクロスオリジンリソース共有 (CORS) を管理
+      Cors:
+        # 指定されたオリジンからのリクエストを行うコードでレスポンスが共有できるかどうか
+        AllowOrigin: "'*'"
+        # レスポンスをフロントエンドの JavaScript コードに公開するかどうか
+        AllowCredentials: false
+        # 許可するHTsTPメソッド
+        AllowMethods: "'OPTIONS,POST'"
+        #  Access-Control-Request-Headers を含むプリフライトリクエストへのレスポンスで、実際のリクエストの間に使用できる HTTP ヘッダーを示すために使用
+        # プリフライトリクエストについて: WebサーバがCORS要求を受け付けるかどうかを実際に要求を送信する前に確かめること。クライアントからOPTIONSメソッドのHTTPリクエストを送信する。
+        AllowHeaders: "'Content-Type,X-CSRF-TOKEN,Access-Control-Allow-Origin'"
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
