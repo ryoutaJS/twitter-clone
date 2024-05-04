@@ -44,6 +44,33 @@ Resources:
         # プリフライトリクエストについて: WebサーバがCORS要求を受け付けるかどうかを実際に要求を送信する前に確かめること。クライアントからOPTIONSメソッドのHTTPリクエストを送信する。
         AllowHeaders: "'Content-Type,X-CSRF-TOKEN,Access-Control-Allow-Origin'"
 
+  # ツイート取得のaws lambda
+  TweetActionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # DynamoDBへのフルアクセス権限を与える(CRUDの全てが可能)
+      Policies:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      PackageType: Image # Docker Imageからlambdaを作成する
+      Events:
+        TweetActionFetch:
+          Type: Api # api gateway経由でイベントを受け取る
+          Properties:
+            RestApiId: !Ref MyApi # 上記で作成したapi gatewayを参照
+            # このパスのイベントを受け取ったときにTweetActionFetchラムダを実行
+            Path: /api/fetch_tweet
+            # httpメソッドはPOSTを利用する
+            Method: post
+      Environment:
+        Variables:
+          # dynamoDBのエンドポイント
+          DYNAMO_ENDPOINT_URL: "http://dynamodb.ap-northeast-1.amazonaws.com"
+    Metadata:
+      # 参照するDockerfileについて
+      Dockerfile: ./tweet/Dockerfile
+      DockerContext: ./
+      DockerTag: python3.9-v1
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
