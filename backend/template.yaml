@@ -81,6 +81,25 @@ Resources:
         - Key: TwitterLikeSnsDeveloper
           Value: Green
 
+  # DynamoDBを作成
+  Tweets:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TweetsTableName
+      AttributeDefinitions: # テーブルとインデックスのキースキーマを記述する属性
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: # テーブルのプライマリキーを構成する属性
+        - AttributeName: user_id
+          KeyType: HASH # HASH - パーティションキー
+        - AttributeName: id
+          KeyType: RANGE # RANGE - ソートキー
+      BillingMode: PAY_PER_REQUEST #  1秒あたりに数千ものリクエストを処理できる柔軟な請求オプションで利用した分だけ課金計算される仕組み
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true # 35日前~5分前の時点のテーブル内容を復元できる機能
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
