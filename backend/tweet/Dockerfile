@@ -8,5 +8,11 @@ COPY tweet/requirements.txt ${LAMBDA_TASK_ROOT}/requirements.txt
 # requirements.txtから必要なライブラリをインストールします。
 RUN python3.9 -m pip install --no-cache-dir -r "${LAMBDA_TASK_ROOT}/requirements.txt" -t .
 
+# 以下のファイルをLambda 関数コードへのパスへコピーする
+COPY tweet/main.py ${LAMBDA_TASK_ROOT}/main.py
+COPY tweet/fetch_tweet_handler.py ${LAMBDA_TASK_ROOT}/fetch_tweet_handler.py
 COPY ./db/table.py ${LAMBDA_TASK_ROOT}/db/table.py
 COPY ./db/utils.py ${LAMBDA_TASK_ROOT}/db/utils.py
+
+# main.pyのhandler関数を実行する。
+CMD ["main.handler"]
