@@ -101,15 +101,13 @@ Resources:
         PointInTimeRecoveryEnabled: true # 35日前~5分前の時点のテーブル内容を復元できる機能
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  FetchTweetApi:
+    Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/fetch_tweet/" # 出力する情報の値(ツイート取得APIのエンドポイント)
+  TweetActionFunction:
+    Description: "Tweet Action Function Lambda Function ARN"
+    Value: !GetAtt TweetActionFunction.Arn
+  TweetActionFunctionIamRole:
+    Description: "Implicit IAM Role created for Tweet Action Function function"
+    # Lambda 関数の実行ロールは、AWS サービスおよびリソースにアクセスする許可を関数に付与する AWS Identity and Access Management (IAM)
+    Value: !GetAtt TweetActionFunctionRole.Arn
