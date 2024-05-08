@@ -61,6 +61,12 @@ Resources:
             Path: /api/fetch_tweet
             # httpメソッドはPOSTを利用する
             Method: post
+        TweetActionCreate:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/create_tweet
+            Method: post
       Environment:
         Variables:
           # dynamoDBのエンドポイント
@@ -104,6 +110,9 @@ Outputs:
   FetchTweetApi:
     Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
     Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/fetch_tweet/" # 出力する情報の値(ツイート取得APIのエンドポイント)
+  CreateTweetApi:
+    Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/create_tweet/"
   TweetActionFunction:
     Description: "Tweet Action Function Lambda Function ARN"
     Value: !GetAtt TweetActionFunction.Arn
