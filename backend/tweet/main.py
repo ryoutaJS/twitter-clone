@@ -2,12 +2,14 @@ import json
 import logging
 
 from fetch_tweet_handler import fetch_tweet_handler
+from create_tweet import create_tweet_handler
 
 # handler関数を実装し、これがイベント検知したときに実行する関数になる。
 def handler(event, context):
     """tweet作成ラムダ."""
     handler_mapping = {
         "/api/fetch_tweet": fetch_tweet_handler,
+        "/api/create_tweet": create_tweet_handler,
     }
     try:
         path = event["path"]
