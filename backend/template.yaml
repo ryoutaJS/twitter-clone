@@ -87,6 +87,35 @@ Resources:
         - Key: TwitterLikeSnsDeveloper
           Value: Green
 
+  GeneratePresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - S3CrudPolicy:
+            BucketName: twitter-like-storage
+      PackageType: Image
+      Events:
+        GeneratePresignedUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/upload_url
+            Method: post
+        GenerateDownloadUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/download_url
+            Method: post
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: "twitter-like-storage"
+          S3_ENDPOINT_URL: "https://s3.ap-northeast-1.amazonaws.com"
+    Metadata:
+      Dockerfile: ./presigned_url/Dockerfile
+      DockerContext: ./
+      DockerTag: python3.9-v1
+
   # DynamoDBを作成
   Tweets:
     Type: AWS::DynamoDB::Table
