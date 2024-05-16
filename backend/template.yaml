@@ -146,6 +146,24 @@ Resources:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true # 35日前~5分前の時点のテーブル内容を復元できる機能
 
+  # S3（ストレージ）の設定
+  S3:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: twitter-like-storage
+      VersioningConfiguration: # バージョニングを有効化
+        Status: Enabled
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - PUT
+              - GET
+            AllowedOrigins:
+              - "https://twitter-clone.vercel.app" # vercelにデプロイ後に正しいURLに更新すること
+            MaxAge: 3000
+
 Outputs:
   FetchTweetApi:
     Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
