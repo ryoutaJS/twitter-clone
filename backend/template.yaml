@@ -171,10 +171,22 @@ Outputs:
   CreateTweetApi:
     Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
     Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/create_tweet/"
+  GeneratePresignedUrlApi:
+    Description: "API Gateway endpoint URL for Prod stage for Generate Presigned Url function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/upload_url/"
+  GenerateDownloadUrlApi:
+    Description: "API Gateway endpoint URL for Prod stage for Generate Download Url function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/download_url/"
   TweetActionFunction:
     Description: "Tweet Action Function Lambda Function ARN"
     Value: !GetAtt TweetActionFunction.Arn
+  GeneratePresignedUrlFunction:
+    Description: "Generate Presigned Url Lambda Function ARN"
+    Value: !GetAtt GeneratePresignedUrlFunction.Arn
   TweetActionFunctionIamRole:
     Description: "Implicit IAM Role created for Tweet Action Function function"
     # Lambda 関数の実行ロールは、AWS サービスおよびリソースにアクセスする許可を関数に付与する AWS Identity and Access Management (IAM)
     Value: !GetAtt TweetActionFunctionRole.Arn
+  GeneratePresignedUrlFunctionIamRole:
+    Description: "Implicit IAM Role created for Generate Presigned Url function"
+    Value: !GetAtt GeneratePresignedUrlFunctionRole.Arn
