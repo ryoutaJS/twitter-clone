@@ -119,13 +119,13 @@ Resources:
 
   # 画像アップロード処理のcloud watchの設定
   GeneratePresignedUrlLogGroup:
-  Type: AWS::Logs::LogGroup
-  Properties:
-    LogGroupName: !Sub /aws/lambda/${GeneratePresignedUrlFunction}
-    RetentionInDays: !Ref LogRetentionInDays
-    Tags:
-      - Key: TwitterLikeSnsDeveloper
-        Value: Green
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${GeneratePresignedUrlFunction}
+      RetentionInDays: !Ref LogRetentionInDays
+      Tags:
+        - Key: TwitterLikeSnsDeveloper
+          Value: Green
 
   # DynamoDBを作成
   Tweets:
