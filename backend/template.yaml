@@ -1,0 +1,192 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.9
+
+  Sample SAM Template for backend
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 128
+
+Parameters:
+  StageName:
+    Type: "String"
+    Default: "v1"
+  TweetsTableName:
+    Type: String
+    Default: "Tweets"
+  LogRetentionInDays:
+    Type: Number
+    Default: 1
+
+Resources:
+  MyApi:
+    # HTTPS エンドポイント経由で呼び出すことができる Amazon API Gateway リソースを作成
+    Type: AWS::Serverless::Api
+    Properties:
+      # StageName: URIの最初のパスセグメントとして使用するステージの名前
+      StageName: !Ref StageName # Parametersの参照
+      MethodSettings:
+        - DataTraceEnabled: false
+          ResourcePath: "/*"
+          HttpMethod: "*"
+      # すべての API Gateway API のクロスオリジンリソース共有 (CORS) を管理
+      Cors:
+        # 指定されたオリジンからのリクエストを行うコードでレスポンスが共有できるかどうか
+        AllowOrigin: "'*'"
+        # レスポンスをフロントエンドの JavaScript コードに公開するかどうか
+        AllowCredentials: false
+        # 許可するHTsTPメソッド
+        AllowMethods: "'OPTIONS,POST'"
+        #  Access-Control-Request-Headers を含むプリフライトリクエストへのレスポンスで、実際のリクエストの間に使用できる HTTP ヘッダーを示すために使用
+        # プリフライトリクエストについて: WebサーバがCORS要求を受け付けるかどうかを実際に要求を送信する前に確かめること。クライアントからOPTIONSメソッドのHTTPリクエストを送信する。
+        AllowHeaders: "'Content-Type,X-CSRF-TOKEN,Access-Control-Allow-Origin'"
+
+  # ツイート取得のaws lambda
+  TweetActionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # DynamoDBへのフルアクセス権限を与える(CRUDの全てが可能)
+      Policies:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      PackageType: Image # Docker Imageからlambdaを作成する
+      Events:
+        TweetActionFetch:
+          Type: Api # api gateway経由でイベントを受け取る
+          Properties:
+            RestApiId: !Ref MyApi # 上記で作成したapi gatewayを参照
+            # このパスのイベントを受け取ったときにTweetActionFetchラムダを実行
+            Path: /api/fetch_tweet
+            # httpメソッドはPOSTを利用する
+            Method: post
+        TweetActionCreate:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/create_tweet
+            Method: post
+      Environment:
+        Variables:
+          # dynamoDBのエンドポイント
+          DYNAMO_ENDPOINT_URL: "http://dynamodb.ap-northeast-1.amazonaws.com"
+    Metadata:
+      # 参照するDockerfileについて
+      Dockerfile: ./tweet/Dockerfile
+      DockerContext: ./
+      DockerTag: python3.9-v1
+
+  # cloud watchの設定
+  TweetActionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${TweetActionFunction}
+      RetentionInDays: !Ref LogRetentionInDays
+      Tags:
+        - Key: TwitterLikeSnsDeveloper
+          Value: Green
+
+  # S3へ画像をアップロードする aws lambda
+  GeneratePresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - S3CrudPolicy:
+            BucketName: twitter-app-storage
+      PackageType: Image
+      Events:
+        GeneratePresignedUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/upload_url
+            Method: post
+        GenerateDownloadUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/download_url
+            Method: post
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: "twitter-app-storage"
+          S3_ENDPOINT_URL: "https://s3.ap-northeast-1.amazonaws.com"
+    Metadata:
+      Dockerfile: ./presigned_url/Dockerfile
+      DockerContext: ./
+      DockerTag: python3.9-v1
+
+  # 画像アップロード処理のcloud watchの設定
+  GeneratePresignedUrlLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${GeneratePresignedUrlFunction}
+      RetentionInDays: !Ref LogRetentionInDays
+      Tags:
+        - Key: TwitterLikeSnsDeveloper
+          Value: Green
+
+  # DynamoDBを作成
+  Tweets:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TweetsTableName
+      AttributeDefinitions: # テーブルとインデックスのキースキーマを記述する属性
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: # テーブルのプライマリキーを構成する属性
+        - AttributeName: user_id
+          KeyType: HASH # HASH - パーティションキー
+        - AttributeName: id
+          KeyType: RANGE # RANGE - ソートキー
+      BillingMode: PAY_PER_REQUEST #  1秒あたりに数千ものリクエストを処理できる柔軟な請求オプションで利用した分だけ課金計算される仕組み
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true # 35日前~5分前の時点のテーブル内容を復元できる機能
+
+  # S3（ストレージ）の設定
+  S3:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: twitter-app-storage
+      VersioningConfiguration: # バージョニングを有効化
+        Status: Enabled
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - PUT
+              - GET
+            AllowedOrigins:
+              - "https://twitter-clone.vercel.app" # vercelにデプロイ後に正しいURLに更新すること
+            MaxAge: 3000
+
+Outputs:
+  FetchTweetApi:
+    Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/fetch_tweet/" # 出力する情報の値(ツイート取得APIのエンドポイント)
+  CreateTweetApi:
+    Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/create_tweet/"
+  GeneratePresignedUrlApi:
+    Description: "API Gateway endpoint URL for Prod stage for Generate Presigned Url function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/upload_url/"
+  GenerateDownloadUrlApi:
+    Description: "API Gateway endpoint URL for Prod stage for Generate Download Url function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/download_url/"
+  TweetActionFunction:
+    Description: "Tweet Action Function Lambda Function ARN"
+    Value: !GetAtt TweetActionFunction.Arn
+  GeneratePresignedUrlFunction:
+    Description: "Generate Presigned Url Lambda Function ARN"
+    Value: !GetAtt GeneratePresignedUrlFunction.Arn
+  TweetActionFunctionIamRole:
+    Description: "Implicit IAM Role created for Tweet Action Function function"
+    # Lambda 関数の実行ロールは、AWS サービスおよびリソースにアクセスする許可を関数に付与する AWS Identity and Access Management (IAM)
+    Value: !GetAtt TweetActionFunctionRole.Arn
+  GeneratePresignedUrlFunctionIamRole:
+    Description: "Implicit IAM Role created for Generate Presigned Url function"
+    Value: !GetAtt GeneratePresignedUrlFunctionRole.Arn
